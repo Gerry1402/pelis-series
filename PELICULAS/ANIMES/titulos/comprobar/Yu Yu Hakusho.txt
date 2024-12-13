@@ -1,0 +1,112 @@
+001 - Adéu, món dels vius
+002 - El príncep Koenma, la prova per tornar a la vida
+003 - En Kuwabara perseguit! La paraula d'un home
+004 - El foc que crema, el vincle dels amants
+005 - En Yusuke torna a la vida. La nova missió
+006 - Els tres lladres: Hiei, Kurama i Goki
+007 - El secret d'en Kurama. L'amor entre mare i fill
+008 - La Keiko en perill. L'ull maligne d'en Hiei
+009 - El torneig de selecció del successor de la mestra Genkai
+010 - El combat a les fosques. L'espasa espiritual d'en Kuwabara
+011 - La lluita agònica d'en Yusuke. L'ofensiva desesperada
+012 - En Lando es manifesta. La derrota d'en Kuwabara
+013 - En Yusuke contra en Lando. Les tècniques d'en Lando
+014 - El castell laberíntic. L'exigència dels quatre grans monstres
+015 - Pètals i espines. La rosa d'en Kurama
+016 - L'orgull d'en Kuwabara. Reapareix l'espasa espiritual
+017 - La baixada a l'infern. El crit d'en Byakko
+018 - En Hiei. L'espasa invisible
+019 - En Suzako. L'últim gran monstre
+020 - El combat de les tècniques secretes. Els 7 Suzakos
+021 - El contraatac decisiu d'en Yusuke
+022 - Yukina, la donzella afligida
+023 - Els germans Toguro, servents de les tenebres
+024 - Uns rivals terribles: el grup tricorne
+025 - Endavant, Kuwabara! La força oculta de l'amor
+026 - La invitació al torneig clandestí d'arts marcials
+027 - La travessia de la mort. Cap a l'illa de la forca
+028 - Un enemic petit però poderós. La tècnica secreta d'en Rinku
+029 - Les flors de sang d'en Kurama
+030 - La tècnica imperfecta: el drac de flames negres
+031 - El lluitador begut. L'atac borratxo d'en Chu
+032 - El combat decisiu a fulla de ganivet
+033 - L'últim combat. Els equips dels quarts de final
+034 - Un 0,05% de possibilitats de guanyar
+035 - L'emmascarada al descobert. La bella guerrera
+036 - La fi dels plans perversos del doctor Ichigaki. El baptisme de llum
+037 - Els ninges infernals. L'equip dels servents del mal
+038 - El suplici d'en Kurama. Els cosmètics de la mort
+039 - En Bakken, destrossat. El cop de ràbia d'en Yusuke
+040 - En Jin, el mestre del vent. El combat a l'ull de l'huracà
+041 - El projectil espiritual. Una decisió inesperada
+042 - La lluita desesperada d'en Kuwabara. L'escomesa de l'amor
+043 - L'emmascarada es mostra tal com és
+044 - La prova decisiva de la mestra Genkai
+045 - El segon combat d'en Hiei. Fes servir el drac de flames negres
+046 - Quina esgarrifança! Les transformacions d'en Kuromomotaro
+047 - En Kurama, la guineu. El lladre llegendari
+048 - L'instrument malèfic: el martell de la mort
+049 - El combat de la mestra Genkai, amb la força que li queda
+050 - El combat amb en Suzuki, el guerrer màgic
+051 - Els destins enfrontats. L'ombra d'en Toguro
+052 - La mort de la Genkai. El desenllaç d'una història de 50 anys enrere
+053 - Abans de la tempesta. El combat contra el dolor
+054 - Comença la final del torneig clandestí d'arts marcials
+055 - Explosions en cadena! La guineu desvetllada
+056 - En Kurama en dificultats. L'intent a la desesperada
+057 - L'amenaça oculta. En Bui es treu l'armadura
+058 - La tècnica perfeccionada. Ataca, drac de flames negres
+059 - L'ombra sinistra del germà d'en Toguro
+060 - L'explosió de ràbia. El contraatac d'en Kuwabara
+061 - El combat decisiu: l'enfrontament entre els dos capitans
+062 - En Toguro: terror al 100%
+063 - En Yusuke: l'altíssim preu per arribar fins al límit
+064 - La fi del combat. El xoc final
+065 - Els plans d'en Sagyo desapareixen amb l'estadi
+066 - El deute d'en Toguro. El millor premi
+067 - Un nou començament
+068 - La trampa de la mansió de les 4 dimensions
+069 - El poder de la paraula prohibida. L'astúcia d'en Kurama
+070 - La terrible veritat. Un nou misteri
+071 - El terror que s'acosta. El forat del món infernal
+072 - Els emissaris del món infernal. Els set enemics
+073 - Les mans assassines del doctor misteriós
+074 - Destrueix el territori
+075 - El mariner. La trampa que amaga la pluja
+076 - El retorn d'en Kuwabara. La força retrobada
+077 - El passat fosc del detectiu espiritual
+078 - La lluita cara a cara. L'àngel negre
+079 - La persecució d'en Yusuke. Hem de rescatar en Kuwabara
+080 - Els atacs del franctirador. El blanc de la mort
+081 - El centre recreatiu de dins la gruta
+082 - La increïble habilitat del mestre dels jocs
+083 - L'única sortida! La decisió d'en Kurama
+084 - La fúria d'en Kurama. El gurmet de debò
+085 - El combat decisiu entre els dos detectius espirituals
+086 - Els esforços d'en Yusuke. La diferència decisiva
+087 - El segell màgic d'en Koenma
+088 - En Sensui allibera la llum sagrada
+089 - L'instant en què tot s'atura
+090 - La voluntat d'en Yusuke
+091 - El desvetllament. La represa del combat
+092 - El combat definitiu. L'esperit es desperta
+093 - La fi del combat al món infernal
+094 - L'epíleg. La vida continua
+095 - El destí d'en Yusuke. El perill a l'aguait
+096 - Els visitants de les tenebres. Augmenta el misteri
+097 - El comiat. Els camins se separen
+098 - Cap al món infernal. La trobada amb l'avantpassat
+099 - Un record inesborrable. El naixement d'en Hiei
+100 - El secret de l'ull maligne surt a la llum
+101 - Els lladres del món infernal. Mil anys després
+102 - La transformació en guineu, el perill amagat
+103 - La voluntat del pare. Un sentiment que ve de lluny
+104 - Una proposta inesperada. Canvis al món infernal
+105 - El torneig del món infernal. Els combats preliminars
+106 - En Yomi i en Shura: l'enfrontament entre pare i fill
+107 - Els combats. Els somnis dels lluitadors
+108 - En Kurama. El record del passat
+109 - En Hiei i la Mukuro, enfrontats
+110 - La força d'en Yusuke, tota la que té
+111 - El final del combat
+112 - A reveure! Els defensors del més enllà
