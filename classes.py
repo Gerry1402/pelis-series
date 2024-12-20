@@ -178,7 +178,7 @@ class MKV: #Clase para archivos MKV
                 self.archivo.tracks[id].sync = tiempo
         
         elif audios or subtitulos:
-            for id, track in enumerate(self.archivo.tracks[:-1], start=1):
+            for id, track in enumerate(self.archivo.tracks[1:], start=1):
                 if audios and track.track_type == 'audio' and track.language in audios:
                     self.archivo.tracks[id].sync = tiempo
                 elif subtitulos and track.track_type == 'subtitles' and track.language in subtitulos:
