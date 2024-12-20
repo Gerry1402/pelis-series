@@ -50,7 +50,7 @@ class MKV: #Clase para archivos MKV
 
             info_track = {'id': track.track_id, 'name': track.track_name, 'type': track.track_type, 'codec': track.track_codec}
             if track.track_type == 'audio' or track.track_type == 'subtitles':
-                info_track.update({'language': track.language, 'default': track.default_track})
+                info_track.update({'language': track.language, 'default': track.default_track, 'sync': track.sync})
                 if track.track_type == 'subtitles':
                     info_track.update({'forced': track.forced_track})
             detalles_tracks.append(info_track)
