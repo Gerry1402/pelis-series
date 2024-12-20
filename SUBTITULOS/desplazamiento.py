@@ -1,5 +1,5 @@
 import os, datetime
-from .varios import sub_ass, sub_srt, extensiones
+from .varios import extensiones
 
 
 carpeta_fuente = os.path.join('D:\\','Users','paula','Downloads','One Piece ESP SUB')
