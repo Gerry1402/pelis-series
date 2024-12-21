@@ -1,6 +1,6 @@
 from typing import Union, List, Dict
 
-def json_series(temporada:int, fecha_temporada: int, numero_temporadas:int = None, serie:str = ''):
+def json_series(temporada:int, fecha_temporada: int, numero_episodio:int, titulo_episodio:str, numero_temporadas:int = None, serie:str = ''):
 
     json = {
         'collection':{
@@ -11,6 +11,7 @@ def json_series(temporada:int, fecha_temporada: int, numero_temporadas:int = Non
             'DATE_RELEASED': str(fecha_temporada)
         },
         'episode':{
-            
+            'PART_NUMBER': str(numero_episodio),
+            'TITLE': titulo_episodio,
         }
     }

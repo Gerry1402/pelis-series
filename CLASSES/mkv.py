@@ -87,12 +87,11 @@ class MKV: #Clase para archivos MKV
             idiomas (List[str]): Pistas de idiomas a eliminar.
             und (bool): Añadir los 'undefined' a la lista de pistas a eliminar
         """
-        for id in tracks:
-            self.archivo.tracks.remove(self.archivo.tracks[id])
+        if tracks:
+            self.archivo.tracks = [track for id, track in enumerate(self.archivo.tracks) if id not in tracks]
         
-        for id, track in enumerate(self.archivo.tracks[1:], start=1):
-            if track.language in idiomas+(['und'] if und else []):
-                self.archivo.tracks.remove(self.archivo.tracks[id])
+        else:
+            self.archivo.tracks = [track for id, track in enumerate(self.archivo.tracks) if track.language not in idiomas+(['und'] if und else [])]
     
     def conservar(self, tracks: Union[int, List[int]] = [], idiomas: List[str] = [], und: bool = True):
         """
@@ -105,13 +104,11 @@ class MKV: #Clase para archivos MKV
             idiomas (List[str]): Pistas de idiomas a conservar.
             und (bool): Añadir los 'undefined' a la lista de pistas a conservar
         """
-        for id in range(1, len(self.archivo.tracks)):
-            if id not in tracks:
-                self.archivo.tracks.remove(self.archivo.tracks[id])
+        if tracks:
+            self.archivo.tracks = [track for id, track in enumerate(self.archivo.tracks) if id in tracks]
         
-        for id, track in enumerate(self.archivo.tracks[1:], start=1):
-            if track.language not in idiomas+(['und'] if und else []):
-                self.archivo.tracks.remove(self.archivo.tracks[id])
+        else:
+            self.archivo.tracks = [track for id, track in enumerate(self.archivo.tracks) if track.language in idiomas+(['und'] if und else [])]
 
     def reordenar(self, tracks:List[int] = [], idiomas: List[str] = []):
         """
