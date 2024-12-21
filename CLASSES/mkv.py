@@ -91,7 +91,7 @@ class MKV: #Clase para archivos MKV
             self.archivo.tracks = [track for id, track in enumerate(self.archivo.tracks) if id not in tracks]
         
         else:
-            self.archivo.tracks = [track for id, track in enumerate(self.archivo.tracks) if track.language not in idiomas+(['und'] if und else [])]
+            self.archivo.tracks = [track for track in self.archivo.tracks if track.language not in idiomas+(['und'] if und else [])]
     
     def conservar(self, tracks: Union[int, List[int]] = [], idiomas: List[str] = [], und: bool = True):
         """
@@ -105,10 +105,10 @@ class MKV: #Clase para archivos MKV
             und (bool): Añadir los 'undefined' a la lista de pistas a conservar
         """
         if tracks:
-            self.archivo.tracks = [track for id, track in enumerate(self.archivo.tracks) if id in tracks]
+            self.archivo.tracks = [track for id, track in enumerate(self.archivo.tracks) if id in [0] + tracks]
         
         else:
-            self.archivo.tracks = [track for id, track in enumerate(self.archivo.tracks) if track.language in idiomas+(['und'] if und else [])]
+            self.archivo.tracks = [self.archivo.tracks[0]] + [track for track in self.archivo.tracks[1:] if track.language in idiomas+(['und'] if und else [])]
 
     def reordenar(self, tracks:List[int] = [], idiomas: List[str] = []):
         """
