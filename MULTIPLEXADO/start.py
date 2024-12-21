@@ -7,7 +7,7 @@ archivos = [archivo for archivo in os.listdir(carpeta_multiplexado.ruta) if os.p
 
 print(f'Para los idiomas utilizar la etiqueta iso-6392. Los idiomas que hay registrados son {', '.join(iso6392[:-1])} y {iso6392[-1]}\n')
 
-pregunta = input('Es un anime? [S/N]')
+pregunta = input('Es un anime? [S/N]: ')
 
 if pregunta.lower() == 's':
     idioma_original = input('Idioma original (iso-6392) ("jpn" por defecto): ').replace(' ', '').lower() or 'jpn'

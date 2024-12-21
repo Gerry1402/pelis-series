@@ -71,8 +71,6 @@ class MKV: #Clase para archivos MKV
         """
 
         for id, idioma in idiom.items():
-            if idioma not in iso6392:
-                quit(f'{self.nombre}: "{idioma}" no està en la variable "iso6392"')
             self.archivo.tracks[id].language = idioma
             self.archivo.tracks[id].forced_track = id in forz
     
@@ -128,31 +126,23 @@ class MKV: #Clase para archivos MKV
                 actual, nuevo = i, tracks.index(i+1)
                 tracks[actual], tracks[nuevo] = tracks[nuevo], tracks[actual]
         
-        elif idiomas and set(idiomas).issubset(set(iso6392)):
-            idiomas.append('und')
-            audios = []
-            subtitulos = []
-            self.audios = []
-            self.subtitulos = []
-            for track in self.archivo.tracks:
-                if track.track_type == 'audio':
-                    audios.append(track)
-                    self.audios.append(track.language) if track.language not in self.audios else None
-                elif track.track_type == 'subtitles':
-                    subtitulos.append(track)
-                    self.subtitulos.append(track.language) if track.language not in self.subtitulos else None
-            audios.sort(key = lambda x: (idiomas.index(x.language)))
-            self.audios.sort(key = lambda x: (idiomas.index(x)))
-            subtitulos.sort(key = lambda x: (idiomas.index(x.language), not x.forced_track))
-            self.subtitulos.sort(key = lambda x: (idiomas.index(x)))
-            self.archivo.tracks = [self.archivo.tracks[0]] + audios + subtitulos
-        else:
-            diferencia = sorted(list(set(idiomas) - set(iso6392)))
-            if len(diferencia) != 1:
-                texto = f'{', '.join(diferencia[:-1])} y {diferencia[-1]} no están en la variable "iso6392"'
-            else:
-                texto = f'{diferencia[-1]} no está en la variable "iso6392"'
-            quit(texto)
+        idiomas.append('und')
+        audios = []
+        subtitulos = []
+        self.audios = []
+        self.subtitulos = []
+        for track in self.archivo.tracks:
+            if track.track_type == 'audio':
+                audios.append(track)
+                self.audios.append(track.language) if track.language not in self.audios else None
+            elif track.track_type == 'subtitles':
+                subtitulos.append(track)
+                self.subtitulos.append(track.language) if track.language not in self.subtitulos else None
+        audios.sort(key = lambda x: (idiomas.index(x.language)))
+        self.audios.sort(key = lambda x: (idiomas.index(x)))
+        subtitulos.sort(key = lambda x: (idiomas.index(x.language), not x.forced_track))
+        self.subtitulos.sort(key = lambda x: (idiomas.index(x)))
+        self.archivo.tracks = [self.archivo.tracks[0]] + audios + subtitulos
     
     def predeterminar(self, tracks:List[int] = [], audio: str = '', subtitulo: str = '', forzado: bool = True, auto: bool = False):
         """
@@ -209,9 +199,9 @@ class MKV: #Clase para archivos MKV
                     nombre = track.track_codec
 
                 elif track.track_type == 'subtitles':
-                    nombre = sub[track.language]
+                    nombre = sub.get(track.language, track.track_name)
                     if track.forced_track:
-                        nombre = forz[track.language]
+                        nombre = forz.get(track.language, track.track_name)
                         nombre = nombre.capitalize()
 
                 self.archivo.tracks[id].track_name = nombre
