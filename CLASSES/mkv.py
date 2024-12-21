@@ -191,7 +191,7 @@ class MKV: #Clase para archivos MKV
 
         elif auto:
 
-            self.archivo.tracks[0].track_name = f'HEVC {self.ancho} × {self.alto}'
+            self.archivo.tracks[0].track_name = f'HEVC {self.ancho}×{self.alto}'
 
             for id, track in enumerate(self.archivo.tracks[1:], start=1):
 
