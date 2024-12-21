@@ -1,5 +1,5 @@
 import os
-from classes import iso6392
+from CLASSES.mkv import iso6392
 from directorios import *
 
 
