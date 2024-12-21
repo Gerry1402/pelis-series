@@ -26,4 +26,4 @@ for i, archivo in enumerate(archivos, start=1):
     tamaño_analizado += os.path.getsize(archivo)
     porcentaje = tamaño_analizado/tamaño_total
     tiempo = int(time.time()-tiempo_base)
-    print(f'Multiplexar: {i}/{n_archivos}   {round(porcentaje*100, 2)}%.   {int(porcentaje * tiempo *100)-tiempo} segundos restantes         ',end='\r')
+    print(f'Multiplexar: {i}/{n_archivos}   {round(porcentaje*100, 2)}%.   {int((1/porcentaje) * tiempo)-tiempo} segundos restantes         ',end='\r')
