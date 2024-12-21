@@ -1,45 +1,20 @@
-import tvdb_v4_official
+from tmdbv3api import TMDb, Movie, TV
+from dotenv import load_dotenv
+import os
 
-tvdb = tvdb_v4_official.TVDB("APIKEY")
-# OR:
-# tvdb = tvdb_v4_official.TVDB("APIKEY", pin="YOUR PIN HERE")
+load_dotenv()
 
-# fetching several pages of series info
-series_list = [ ]
-for j in range(5): # Pages are numbered from 0
-    series_list += tvdb.get_all_series(j)
+# Configurar TMDb con tu API Key
+tmdb = TMDb()
+tmdb.api_key = os.getenv('API_KEY_TMDB')
+tmdb.language = 'es'  # Idioma de los resultados (español)
 
-# fetching a series
-series = tvdb.get_series(121361)
+movie = Movie()
 
-# fetching a season's episode list
-series = tvdb.get_series_extended(121361)
-for season in sorted(series["seasons"], key=lambda x: (x["type"]["name"], x["number"])):
-    if season["type"]["name"] == "Aired Order" and season["number"] == 1:
-	    season = tvdb.get_season_extended(season["id"])
-	    break
-else:
-    season = None
-if season is not None:
-    print(season["episodes"])
+search = movie.search("Inception")
 
-# fetch a page of episodes from a series by season_type (type is "default" if unspecified)
-info = tvdb.get_series_episodes(121361, page=0)
-print(info["series"])
-for ep in info["episodes"]:
-    print(ep)
-
-# fetching a movie
-movie = tvdb.get_movie(31) # avengers
-
-# access a movie's characters
-movie = tvdb.get_movie_extended(31)
-for c in movie["characters"]:
-    print(c)
-
-# fetching a person record
-person = tvdb.get_person_extended(characters[0]["peopleId"])
-print(person)
-
-# using since If-Modifed-Since parameter
-series = tvdb.get_series_extended(393199, if_modified_since="Wed, 30 Jun 2022 07:28:00 GMT")
+for result in search:
+    print(f"Título: {result.title}")
+    print(f"Resumen: {result.overview}")
+    print(f"Fecha de lanzamiento: {result.release_date}")
+    print("-" * 30)

@@ -13,6 +13,9 @@ class MKV: #Clase para archivos MKV
     def __init__(self, archivo_mkv:str):
         self.dir: str = archivo_mkv
         self.archivo = mkvf(self.dir)
+        self.lenguajes = [track.language for track in self.archivo.tracks]
+        self.subtitulos = []
+        self.audios = []
         self.nombre: str = os.path.splitext(os.path.basename(self.dir))[0]
         self.carpeta: str = os.path.join(os.path.dirname(self.dir), self.nombre)
         self.cap = cv2.VideoCapture(self.dir)
@@ -73,18 +76,41 @@ class MKV: #Clase para archivos MKV
             self.archivo.tracks[id].language = idioma
             self.archivo.tracks[id].forced_track = id in forz
     
-    def eliminar(self, tracks: Union[int, List[int]] = [], conservar: List[str] = []):
+    def eliminar(self, tracks: Union[int, List[int]] = [], idiomas: List[str] = [], und: bool = False):
         """
-        Método para eliminar las pistas especificadas.
+        Método para eliminar las pistas especificadas. Las pistas con idiomas indefinidos no se eliminan por defecto.
+        eliminar(tracks = [5,3,4,2])
+        eliminar(idiomas = ['ita', 'fra'], und = True)
 
         Args:
             tracks (List[int]): Lista de tracks a eliminar.
+            idiomas (List[str]): Pistas de idiomas a eliminar.
+            und (bool): Añadir los 'undefined' a la lista de pistas a eliminar
         """
         for id in tracks:
             self.archivo.tracks.remove(self.archivo.tracks[id])
         
         for id, track in enumerate(self.archivo.tracks[1:], start=1):
-            if track.language not in conservar:
+            if track.language in idiomas+(['und'] if und else []):
+                self.archivo.tracks.remove(self.archivo.tracks[id])
+    
+    def conservar(self, tracks: Union[int, List[int]] = [], idiomas: List[str] = [], und: bool = True):
+        """
+        Método para conservar las pistas especificadas. Las pistas con idiomas indefinidos se conservan por defecto.
+        conservar(tracks = [5,3,4,2])
+        conservar(idiomas = ['cat', 'jpn'], und = False)
+
+        Args:
+            tracks (List[int]): Lista de tracks a conservar.
+            idiomas (List[str]): Pistas de idiomas a conservar.
+            und (bool): Añadir los 'undefined' a la lista de pistas a conservar
+        """
+        for id in range(1, len(self.archivo.tracks)):
+            if id not in tracks:
+                self.archivo.tracks.remove(self.archivo.tracks[id])
+        
+        for id, track in enumerate(self.archivo.tracks[1:], start=1):
+            if track.language not in idiomas+(['und'] if und else []):
                 self.archivo.tracks.remove(self.archivo.tracks[id])
 
     def reordenar(self, tracks:List[int] = [], idiomas: List[str] = []):
@@ -109,15 +135,19 @@ class MKV: #Clase para archivos MKV
             idiomas.append('und')
             audios = []
             subtitulos = []
+            self.audios = []
+            self.subtitulos = []
             for track in self.archivo.tracks:
                 if track.track_type == 'audio':
-                    track.default_track = track.language == idiomas[0]
                     audios.append(track)
+                    self.audios.append(track.language) if track.language not in self.audios else None
                 elif track.track_type == 'subtitles':
-                    track.default_track = track.language == idiomas[0] and track.forced_track
                     subtitulos.append(track)
+                    self.subtitulos.append(track.language) if track.language not in self.subtitulos else None
             audios.sort(key = lambda x: (idiomas.index(x.language)))
+            self.audios.sort(key = lambda x: (idiomas.index(x.language)))
             subtitulos.sort(key = lambda x: (idiomas.index(x.language), not x.forced_track))
+            self.subtitulos.sort(key = lambda x: (idiomas.index(x.language), not x.forced_track))
             self.archivo.tracks = [self.archivo.tracks[0]] + audios + subtitulos
         else:
             diferencia = sorted(list(set(idiomas) - set(iso6392)))
@@ -126,6 +156,32 @@ class MKV: #Clase para archivos MKV
             else:
                 texto = f'{diferencia[-1]} no está en la variable "iso6392"'
             quit(texto)
+    
+    def predeterminar(self, tracks:List[int] = [], audio: str = '', subtitulo: str = '', forzado: bool = True, auto: bool = False):
+        """
+        Método para definir las pistas predeterminadas.\n
+        predeterminar(tracks = [5, 3, 4, 2, 1, ...])\n
+        predeterminar(audio = 'cat', subtitulo = 'spa', forzado = False)\n
+        predeterminar(auto = True, forzado = False)
+
+        Args:
+            tracks (List[int]): Lista de pistas del archivo.
+            audio (str): Idioma de audio que se pondrá como el predeterminado
+            subtitulo (str): Idioma de subtitulo que se pondrá como el predeterminado.
+            forzado (bool): Especificar si el subtitulo a establecer como predeterminado es forzado o no. Por defecto en True.
+            auto (bool): Variable para activar las pistas predeterminadas de forma automática una vez se han ordenado las pistas tambiés de forma automática.
+        """
+        for id in tracks:
+            self.archivo.tracks[id].default_track = id in tracks
+
+        audio_predeterminado = audio or (self.audios[0] if auto else None)
+        subtitulo_predeterminado = subtitulo or (self.subtitulos[0] if auto else None)
+
+        for id, track in enumerate(self.archivo.tracks[1:], start=1):
+            if track.track_type == 'audio':
+                self.archivo.tracks[id].default_track = self.archivo.tracks[id].language == audio_predeterminado
+            elif track.track_type == 'subtitles':
+                self.archivo.tracks[id].default_track = self.archivo.tracks[id].language == subtitulo_predeterminado and track.forced_track == forzado
 
 
     def renombrar(self, titulo:str = '', nombres:Dict[int, str] = {}, auto:bool = False):

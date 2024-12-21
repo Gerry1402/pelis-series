@@ -1,7 +1,5 @@
 import os, sys
 from pymkv import MKVTrack as mkvt, MKVFile as mkvf, MKVAttachment as mkva
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from directorios import *
 
 # EDITAR SÓLO ESTA PARTE. SEGUIR INSRRUCCIONES. UTILIZAR ESPAÑOL.

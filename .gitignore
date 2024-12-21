@@ -4,3 +4,4 @@ pruebas.py
 venv
 PRUEBAS
 **/__pycache__
+.env
