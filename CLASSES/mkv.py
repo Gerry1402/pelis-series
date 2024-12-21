@@ -64,7 +64,7 @@ class MKV: #Clase para archivos MKV
 
         Args:
             idiom (Dict[int, str]): Diccionario en el que cada clave es un int (representando el id) y cada valor el idioma correspondiente.
-            forz (List[int]): Lista de ids de pistas forzadas. Sólo se pondrán las pistas que sean forzadas. el resto se pondrán como falsas.
+            forz (List[int]): Lista de ids de pistas forzadas. Sólo se especificarán las pistas forzadas, el resto se pondrán como falsas.
         """
 
         for id, idioma in idiom.items():
@@ -73,7 +73,7 @@ class MKV: #Clase para archivos MKV
             self.archivo.tracks[id].language = idioma
             self.archivo.tracks[id].forced_track = id in forz
     
-    def eliminar(self, tracks: Union[int, List[int]] = []):
+    def eliminar(self, tracks: Union[int, List[int]] = [], conservar: List[str] = []):
         """
         Método para eliminar las pistas especificadas.
 
@@ -82,6 +82,10 @@ class MKV: #Clase para archivos MKV
         """
         for id in tracks:
             self.archivo.tracks.remove(self.archivo.tracks[id])
+        
+        for id, track in enumerate(self.archivo.tracks[1:], start=1):
+            if track.language not in conservar:
+                self.archivo.tracks.remove(self.archivo.tracks[id])
 
     def reordenar(self, tracks:List[int] = [], idiomas: List[str] = []):
         """
@@ -254,63 +258,3 @@ class MKV: #Clase para archivos MKV
 
     def __str__(self):
         return self.archivo.title
-
-
-
-
-
-
-
-
-
-
-
-
-class Titulos_series_animes:
-
-    def __init__ (self, ruta):
-        self.dir = ruta
-        self.nombre = os.path.splitext(os.path.basename(ruta))[0]
-        self.info = []
-        with open (ruta, 'r') as f:
-            for linia in f:
-                if linia.strip() == '\n':
-                    continue
-                numero, titulo = linia.strip().split(' - ', 1)
-                temporada, episodio = numero.split('x')
-                temporada, episodio = int(temporada), int(episodio) if float(episodio) % 1 == 0 else float(episodio)
-                self.info.append([temporada, episodio, titulo])
-        self.info.sort(key = lambda x: (x[0], x[1]))
-        self.numero_episodios = len(self.info)
-        self.numero_temporadas = self.info[-1][0]
-        self.cifras_temporadas = len(str(self.temporadas))
-        
-    def temporadas (self, temporadas: Union[int, List[int]] = None, intervalo: List[int] = None, exclusiones: Union[int, List[int]] = None):
-
-        if type(temporadas) != set:
-            if temporadas:
-                temporadas = set(temporadas) if type(temporadas) == list else set([temporadas])
-
-            if intervalo:
-                intervalo = range(intervalo[0], intervalo[-1]+1)
-
-        temp = temporadas or intervalo
-
-        if exclusiones and type(exclusiones) != set:
-            exclusiones = set(exclusiones) if type(exclusiones) == list else set([exclusiones])
-        
-        temp = temp-exclusiones
-
-        return [episodio for episodio in self.info if episodio[0] in temp]
-    
-    def episodios (self, episodios: Union[int, List[int]]):
-
-        if type(episodios) == list:
-            return [episodio for episodio in self.info if episodio['temp'] in range(episodios[0], episodios[-1]+1)]
-        else:
-            return self.info[episodios+1]
-    
-    def temporada_episodio(self, temporada: int, episodio: Union[int, float]):
-        for episodio in self.temporadas(temporadas=temporada):
-            if episodio[1] == episodio:
-                return episodio
