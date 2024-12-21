@@ -142,9 +142,9 @@ class MKV: #Clase para archivos MKV
                     subtitulos.append(track)
                     self.subtitulos.append(track.language) if track.language not in self.subtitulos else None
             audios.sort(key = lambda x: (idiomas.index(x.language)))
-            self.audios.sort(key = lambda x: (idiomas.index(x.language)))
+            self.audios.sort(key = lambda x: (idiomas.index(x)))
             subtitulos.sort(key = lambda x: (idiomas.index(x.language), not x.forced_track))
-            self.subtitulos.sort(key = lambda x: (idiomas.index(x.language), not x.forced_track))
+            self.subtitulos.sort(key = lambda x: (idiomas.index(x)))
             self.archivo.tracks = [self.archivo.tracks[0]] + audios + subtitulos
         else:
             diferencia = sorted(list(set(idiomas) - set(iso6392)))
