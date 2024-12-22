@@ -1,6 +1,7 @@
-import os, cv2
+import os, cv2, subprocess, re
 from pymkv import MKVTrack as mkvt, MKVFile as mkvf, MKVAttachment as mkva
 from typing import Union, List, Dict
+from rich.progress import Progress
 
 iso6392 = ['cat', 'spa', 'eng', 'jpn', 'ita', 'fra']
 idiomas_sub = ['Subtítols', 'Subtítulos', 'Subtitles', '字幕', 'Sottotitoli', 'Sous-titres']
@@ -21,6 +22,7 @@ class MKV: #Clase para archivos MKV
         self.cap = cv2.VideoCapture(self.dir)
         self.ancho: int = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         self.alto: int = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        self.nuevo_ancho_alto: List[str] = None
         self.frames_totales: int = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
         self.fps: float = self.cap.get(cv2.CAP_PROP_FPS)
         self.tiempo_total: int = int(self.frames_totales / self.fps * 100)/100
@@ -257,6 +259,10 @@ class MKV: #Clase para archivos MKV
         elif segundos:
             self.archivo.split_duration(segundos)
     
+    def redimensionar(self, ancho:int, alto:int):
+        self.nuevo_ancho_alto = ['--display-dimensions', f'0:{ancho}x{alto}']
+        self.archivo.tracks[0].track_name = f'HEVC {ancho}×{alto}'
+    
     def multiplexar(self, output: str = None):
         """ 
         Función para muxear el archivo final.\n
@@ -272,7 +278,21 @@ class MKV: #Clase para archivos MKV
 
         output = os.path.join(output, f'{self.nombre}.mkv')
 
-        self.archivo.mux(output_path=output, silent=True)
+        comando = self.archivo.command(output_path=output, subprocess=True)
+
+        if self.nuevo_ancho_alto:
+            comando = comando[:3] + self.nuevo_ancho_alto + comando[3:]
+        
+        #subprocess.run(comando)
+        
+        process = subprocess.Popen(comando, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+
+        pattern = re.compile(r"[A-Za-z]+:\s([0-9]+)%", re.IGNORECASE)
+        for line in process.stdout:
+            # Buscar el porcentaje de progreso
+            match = pattern.search(line)
+            if match:
+                yield int(match.group(1))
 
         if os.path.isfile(os.path.join(os.path.dirname(output), f'{self.nombre}-003.mkv')):
             archivos = {'-001.mkv', '-002.mkv', '-003.mkv'}

@@ -1,4 +1,4 @@
-import os, cv2
+import os, ffmpeg
 from typing import Union, List, Dict
 
 audio_codecs = {
@@ -22,3 +22,9 @@ audio_codecs = {
     "mp2": "mp2",
     "speex": "libspeex",
 }
+
+class Audio:
+    def __init__(self, ruta_audio):
+        self.nombre = os.path.splitext(os.path.basename(ruta_audio))[0]
+        self.extension = os.path.splitext(os.path.basename(ruta_audio))[-1][:-1]
+        self.stream = ffmpeg.input(ruta_audio)

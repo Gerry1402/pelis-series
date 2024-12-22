@@ -2,28 +2,36 @@ import os, time
 from CLASSES.mkv import MKV
 from directorios import *
 from .start import *
+from .proceso import *
+from rich.progress import Progress
 
 
-idiomas_extra = []
-tiempos_totales = 0
-tamaño_analizado = 0
-n_archivos = len(archivos)
-tiempo_base = time.time()
 
-for i, archivo in enumerate(archivos, start=1):
+# tiempo_base = time.time()
 
-    mkv = MKV(archivo)
-    #mkv.idiomas(idiom={}, forz=[])
-    #mkv.eliminar(tracks=[])
-    mkv.conservar(idiomas = orden_idiomas + idiomas_extra)
-    mkv.renombrar(titulo='', auto=True)
-    mkv.reordenar(idiomas=orden_idiomas)
-    mkv.predeterminar(subtitulo='spa', forzado=False)
-    #mkv.sincronizar(tiempo=350, audios = [], subtitulos = [], forz={})
-    #mkv.recortar(inicio=True, frames=361)
-    mkv.multiplexar(output=os.path.join(carpeta_multiplexado.done))
+# for i, archivo in enumerate(archivos, start=1):
 
-    tamaño_analizado += os.path.getsize(archivo)
-    porcentaje = tamaño_analizado/tamaño_total
-    tiempo = int(time.time()-tiempo_base)
-    print(f'Multiplexar: {i}/{n_archivos}   {round(porcentaje*100, 2)}%.   {int((1/porcentaje) * tiempo)-tiempo} segundos restantes         ',end='\r')
+#     proceso(archivo)
+
+#     tamaño_analizado += os.path.getsize(archivo)
+
+#     porcentaje = tamaño_analizado/tamaño_total
+
+#     tiempo = int(time.time()-tiempo_base)
+
+#     print(f'Multiplexar: {i}/{n_archivos}   {round(porcentaje*100, 2)}%.   {int(((1/porcentaje)-1) * tiempo)} segundos restantes         ',end='\r')
+
+def main():
+    with Progress() as progreso:
+        # Barra de progreso total
+        principal = progreso.add_task("Progreso Total", total=n_archivos)
+        
+        for archivo in archivos:
+            nombre = os.path.splitext(os.path.basename(archivo))[0]
+            progreso.add_task(f"{nombre[:28]}{'...' if nombre[:28] != nombre else ''}", total=100)
+        
+        for id, archivo in enumerate(archivos, start=1):
+            proceso_consola(archivo, progreso, id)  # Procesar la parte
+            progreso.update(principal, advance=1)  # Avanzar en el progreso total
+
+main()
