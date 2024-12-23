@@ -6,7 +6,8 @@ idiomas_extra = []
 def proceso(archivo):
     mkv = MKV(archivo)
 
-
+    ######
+    
     #mkv.idiomas(idiom={}, forz=[])
     #mkv.eliminar(tracks=[])
     mkv.conservar(idiomas = orden_idiomas + idiomas_extra)
@@ -23,7 +24,5 @@ def proceso(archivo):
 
 
 def proceso_consola(archivo, progress, task_id):
-    progreso_ant = 0
     for progreso in proceso(archivo):
-        progress.update(task_id, advance=progreso-progreso_ant)
-        progreso_ant = progreso
+        progress.update(task_id, completed=progreso)

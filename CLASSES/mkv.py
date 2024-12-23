@@ -321,3 +321,6 @@ class MKV: #Clase para archivos MKV
 
     def __str__(self):
         return self.archivo.title
+    
+    def __call__(self):
+        return self.archivo.title
