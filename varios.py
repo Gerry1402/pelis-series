@@ -1,5 +1,11 @@
 import os
 from directorios import *
+from itertools import islice
+
+def dividir_lista(lista, tamaño):
+    """Divide una lista usando iteradores."""
+    iterador = iter(lista)
+    return [list(islice(iterador, tamaño)) for _ in range(0, len(lista), tamaño)]
 
 def lista_carpetas(carpeta):
     return [elemento for elemento in os.listdir(carpeta) if os.path.isdir(os.path.join(carpeta, elemento))]
@@ -38,7 +44,7 @@ def renombrar_elementos(carpeta, english=True):
                     separaciones[k] = separaciones[k].lower() if separaciones[k] in total else separaciones[k]
                     separaciones[k] = f"{separaciones[k][:-2]}'{separaciones[k][-1].lower()}" if separaciones[k][-2] == "'" else separaciones[k]
                     separaciones[k] = f"{separaciones[k][0].lower()}'{separaciones[k][2:]}" if separaciones[k][1] == "'" else separaciones[k]
-                    separaciones[k] = "RM" if separaciones[k] == "Rm" else separaciones[k] = "RM"
+                    #separaciones[k] = "RM" if separaciones[k] == "Rm" else separaciones[k] = "RM"
                 palabras[j]='-'.join(separaciones)
             nombre[i]=' '.join(palabras)
         nombre=' - '.join(nombre)

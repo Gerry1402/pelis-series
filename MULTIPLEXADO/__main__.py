@@ -21,16 +21,20 @@ from rich.progress import Progress
 
 def main():
     with Progress() as progreso:
-        # Barra de progreso total
         principal = progreso.add_task("Progreso Total", total=tamaño_total)
+        # Barra de progreso total
         
-        for archivo in archivos:
-            nombre = os.path.splitext(os.path.basename(archivo))[0]
-            progreso.add_task(f"{nombre[:28]}{'...' if nombre[:28] != nombre else ''}", total=100)
-        
-        for id, archivo in enumerate(archivos, start=1):
-            proceso_consola(archivo, progreso, id)  # Procesar la parte
-            progreso.update(principal, advance=os.path.getsize(archivo))  # Avanzar en el progreso total
+        for i, conjunto in enumerate(archivos_separados, start=1):
+            secundario = progreso.add_task(f"Progreso Conjunto {i}/{len(conjunto)}", total=tamaños_conjuntos[i-1])
+            
+            for archivo in conjunto:
+                nombre = os.path.splitext(os.path.basename(archivo))[0]
+                progreso.add_task(f"{nombre[:28]}{'...' if nombre[:28] != nombre else ''}", total=100)
+            
+            for id, archivo in enumerate(archivos, start=1):
+                proceso_consola(archivo, progreso, id)  # Procesar la parte
+                progreso.update(principal, advance=os.path.getsize(archivo))  # Avanzar en el progreso total
+                progreso.update(secundario, advance=os.path.getsize(archivo))  # Avanzar en el progreso total
 
 if __name__ == '__main__':
     main()
