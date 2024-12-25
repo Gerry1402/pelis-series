@@ -11,7 +11,7 @@ def main():
         
         for archivo in archivos:
             nombre = os.path.splitext(os.path.basename(archivo))[0]
-            progreso.add_task(f"{nombre[:28]}{'...' if nombre[:28] != nombre else ''}", total=int(Audio(archivo).tiempo))
+            progreso.add_task(f"{nombre[:28]}{'...' if nombre[:28] != nombre else ''}", total=100)
         
         for id, archivo in enumerate(archivos, start=1):
             proceso_consola(archivo, progreso, id)  # Procesar la parte

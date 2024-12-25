@@ -285,7 +285,7 @@ class MKV: #Clase para archivos MKV
         
         #subprocess.run(comando)
         
-        process = subprocess.Popen(comando, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        process = subprocess.Popen(comando, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, encoding='utf-8')
 
         pattern = re.compile(r"[A-Za-z]+:\s([0-9]+)%", re.IGNORECASE)
         for line in process.stdout:

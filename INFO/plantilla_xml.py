@@ -11,7 +11,8 @@ def json_series(temporada:int, fecha_temporada: int, numero_episodio:int, titulo
             'DATE_RELEASED': str(fecha_temporada)
         },
         'episode':{
-            'PART_NUMBER': str(numero_episodio),
             'TITLE': titulo_episodio,
+            'PART_NUMBER': str(numero_episodio),
+            'EPISODE': '',
         }
     }
