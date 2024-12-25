@@ -4,7 +4,7 @@ from directorios import *
 from varios import dividir_lista
 
 
-numero_archivos_conjunto = 8
+numero_archivos_conjunto = 3
 tamaños_conjuntos = []
 
 archivos = [os.path.join(carpeta_multiplexado.ruta, archivo) for archivo in os.listdir(carpeta_multiplexado.ruta) if os.path.splitext(archivo)[-1] == '.mkv']
@@ -12,7 +12,7 @@ tamaño_analizado = 0
 tamaño_total = 0
 for i, archivo in enumerate(archivos, start=1):
     tamaño_total += os.path.getsize(archivo)
-    if i%8 == 0 or archivo == archivos[-1]:
+    if i % numero_archivos_conjunto == 0 or archivo == archivos[-1]:
         tamaños_conjuntos.append(tamaño_total-sum(tamaños_conjuntos))
 
 archivos_separados = dividir_lista(archivos, numero_archivos_conjunto)
