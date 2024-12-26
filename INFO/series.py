@@ -1,6 +1,10 @@
 from dotenv import load_dotenv
 import os, requests
 import tmdbsimple as tmdb
+from rich.prompt import Prompt, IntPrompt
+name = IntPrompt.ask("Enter your name", choices=['1', '2', '3'], default='1')
+print(type(name))
+quit()
 
 
 serie = input('Nombre de la serie: ')
