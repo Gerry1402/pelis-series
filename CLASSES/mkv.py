@@ -168,9 +168,10 @@ class MKV: #Clase para archivos MKV
             forzado (bool): Especificar si el subtitulo a establecer como predeterminado es forzado o no. Por defecto en True.
             auto (bool): Variable para activar las pistas predeterminadas de forma automática una vez se han ordenado las pistas tambiés de forma automática.
         """
-
-        for id in tracks:
-            self.archivo.tracks[id].default_track = id in tracks
+        if tracks:
+            for id in tracks:
+                self.archivo.tracks[id].default_track = id in tracks
+            return
 
         audio_predeterminado = audio or (self.audios[0] if auto else None)
         subtitulo_predeterminado = subtitulo or (self.subtitulos[0] if auto else None)
