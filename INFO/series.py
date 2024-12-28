@@ -1,14 +1,8 @@
 from dotenv import load_dotenv
-import os, requests
+import os
 import tmdbsimple as tmdb
-from rich.prompt import Prompt, IntPrompt
-from rich.console import Console
-from rich.columns import Columns
 from prompt_toolkit import prompt
-from prompt_toolkit.shortcuts import checkboxlist_dialog, radiolist_dialog
-from varios import dividir_lista
-
-console = Console()
+from CLASSES.menu_seleccion import Menu
 
 serie = input('Nombre de la serie: ')
 
@@ -24,14 +18,17 @@ busqueda = tmdb.Search()
 
 busqueda.tv(query=serie)
 
-opciones_busqueda = [(i, f'{result['name']} ({result['first_air_date'].split('-')[0]})') for i, result in enumerate(busqueda.results)]
-if len(opciones_busqueda) > 1:
-    indice = radiolist_dialog(
-        title="Selecciona una opción",
-        text="Usa las teclas de flecha para navegar y [Espacio] para seleccionar:",
-        values=opciones_busqueda,
-    ).run()
+opciones = []
+years = []
+
+for result in busqueda.results:
+    opciones.append(result['name'])
+    years.append(result['first_air_date'].split('-')[0])
+
+if len(opciones) > 1:
+    indice = Menu(opciones=opciones, subtitulos=years).mostrar(index=True)
     resultado = busqueda.results[indice]
+    print(resultado)
 
 else:
     resultado = busqueda.results[0]

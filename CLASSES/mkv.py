@@ -3,6 +3,7 @@ from pymkv import MKVTrack as mkvt, MKVFile as mkvf, MKVAttachment as mkva
 from typing import Union, List, Dict
 from rich.progress import Progress
 
+idiomas = ['Català', 'Español', 'English', '日本語', 'Italiano', 'Français']
 iso6392 = ['cat', 'spa', 'eng', 'jpn', 'ita', 'fra']
 idiomas_sub = ['Subtítols', 'Subtítulos', 'Subtitles', '字幕', 'Sottotitoli', 'Sous-titres']
 idiomas_forz = ['Subtítols Forçats', 'Subtítulos Forzados', 'Subtitles Forced', '強制字幕', 'Sottotitoli forzati', 'Sous-titres forcés']
@@ -45,19 +46,23 @@ class MKV: #Clase para archivos MKV
 
         for track in self.archivo.tracks:
 
-            if not type:
-                if isinstance(type, str):
-                    if track.track_type != type:
-                        continue
-                elif isinstance(type, list):
-                    if track.track_type not in type:
-                        continue
-
+            if not type and (
+                                isinstance(type, str)
+                                and track.track_type != type
+                                or not isinstance(type, str)
+                                and isinstance(type, list)
+                                and track.track_type not in type
+                            ):
+                continue
             info_track = {'id': track.track_id, 'name': track.track_name, 'type': track.track_type, 'codec': track.track_codec}
-            if track.track_type == 'audio' or track.track_type == 'subtitles':
-                info_track.update({'language': track.language, 'default': track.default_track, 'sync': track.sync})
-                if track.track_type == 'subtitles':
-                    info_track.update({'forced': track.forced_track})
+            if track.track_type in ['audio', 'subtitles']:
+                info_track |= {
+                    'language': track.language,
+                    'default': track.default_track,
+                    'sync': track.sync,
+                }
+            if track.track_type == 'subtitles':
+                info_track['forced'] = track.forced_track
             detalles_tracks.append(info_track)
 
         return detalles_tracks
@@ -76,7 +81,7 @@ class MKV: #Clase para archivos MKV
             self.archivo.tracks[id].language = idioma
             self.archivo.tracks[id].forced_track = id in forz
     
-    def eliminar(self, tracks: Union[int, List[int]] = [], idiomas: List[str] = [], und: bool = False):
+    def eliminar(self, tracks: Union[int, List[int]] = None, idiomas: List[str] = None, und: bool = False):
         """
         Método para eliminar las pistas especificadas. Las pistas con idiomas indefinidos no se eliminan por defecto.
         eliminar(tracks = [5,3,4,2])
@@ -87,13 +92,14 @@ class MKV: #Clase para archivos MKV
             idiomas (List[str]): Pistas de idiomas a eliminar.
             und (bool): Añadir los 'undefined' a la lista de pistas a eliminar
         """
+
         if tracks:
             self.archivo.tracks = [track for id, track in enumerate(self.archivo.tracks) if id not in tracks]
-        
+
         else:
             self.archivo.tracks = [track for track in self.archivo.tracks if track.language not in idiomas+(['und'] if und else [])]
     
-    def conservar(self, tracks: Union[int, List[int]] = [], idiomas: List[str] = [], und: bool = True):
+    def conservar(self, tracks: Union[int, List[int]] = None, idiomas: List[str] = None, und: bool = True):
         """
         Método para conservar las pistas especificadas. Las pistas con idiomas indefinidos se conservan por defecto.
         conservar(tracks = [5,3,4,2])
@@ -104,13 +110,14 @@ class MKV: #Clase para archivos MKV
             idiomas (List[str]): Pistas de idiomas a conservar.
             und (bool): Añadir los 'undefined' a la lista de pistas a conservar
         """
+
         if tracks:
             self.archivo.tracks = [track for id, track in enumerate(self.archivo.tracks) if id in [0] + tracks]
-        
+
         else:
             self.archivo.tracks = [self.archivo.tracks[0]] + [track for track in self.archivo.tracks[1:] if track.language in idiomas+(['und'] if und else [])]
 
-    def reordenar(self, tracks:List[int] = [], idiomas: List[str] = []):
+    def reordenar(self, tracks: List[int] = None, idiomas: List[str] = None):
         """
         Método para organizar las pistas del archivo. Se recomienda utilizar sólo una variable, ya que si se utilizan las dos se estaría reordenando las pistas del archivo dos veces.\n
         ordenar(tracks = [5, 3, 4, 2, 1, ...])\n
@@ -120,6 +127,7 @@ class MKV: #Clase para archivos MKV
             tracks (List[int]): Lista de ints en la que el valor es el id original de la pista del archivo y su posición dentro la lista és la nueva posición que tomará.
             idiomas (List[str]): Lista de idiomas en formato ISO 639-2. Primero situará los idiomas en el orden correspondiente y luego los subtitulos, priorizando entre los del mismo idioma los forzados.
         """
+
         if tracks:
             for i in range(len(tracks)):
                 if tracks[i] == i+1:
@@ -127,7 +135,7 @@ class MKV: #Clase para archivos MKV
                 self.archivo.swap_tracks(tracks[i], i+1)
                 actual, nuevo = i, tracks.index(i+1)
                 tracks[actual], tracks[nuevo] = tracks[nuevo], tracks[actual]
-        
+
         idiomas.append('und')
         audios = []
         subtitulos = []
@@ -146,7 +154,7 @@ class MKV: #Clase para archivos MKV
         self.subtitulos.sort(key = lambda x: (idiomas.index(x)))
         self.archivo.tracks = [self.archivo.tracks[0]] + audios + subtitulos
     
-    def predeterminar(self, tracks:List[int] = [], audio: str = '', subtitulo: str = '', forzado: bool = True, auto: bool = False):
+    def predeterminar(self, tracks: List[int] = None, audio: str = '', subtitulo: str = '', forzado: bool = None, auto: bool = False):
         """
         Método para definir las pistas predeterminadas.\n
         predeterminar(tracks = [5, 3, 4, 2, 1, ...])\n
@@ -160,6 +168,7 @@ class MKV: #Clase para archivos MKV
             forzado (bool): Especificar si el subtitulo a establecer como predeterminado es forzado o no. Por defecto en True.
             auto (bool): Variable para activar las pistas predeterminadas de forma automática una vez se han ordenado las pistas tambiés de forma automática.
         """
+
         for id in tracks:
             self.archivo.tracks[id].default_track = id in tracks
 
@@ -173,7 +182,7 @@ class MKV: #Clase para archivos MKV
                 self.archivo.tracks[id].default_track = self.archivo.tracks[id].language == subtitulo_predeterminado and track.forced_track == forzado
 
 
-    def renombrar(self, titulo:str = '', nombres:Dict[int, str] = {}, auto:bool = False):
+    def renombrar(self, titulo:str = '', nombres: Dict[int, str] = None, auto:bool = False):
         """
         Método para renombrar los diferentes tracks. Utilizar la variable de 'nombres' o 'auto' únicamente. Especificar el título es opcional.\n
         renombrar(nombres: {1: 'AAC', 2: 'Subtítulos', 2: 'AAC'}, titulo = 'Ejemplo')\n
@@ -184,6 +193,7 @@ class MKV: #Clase para archivos MKV
             nombres (Dict[int, str]): Id del track y su nombre correspondiente.
             auto: Opción para renombrar todas las pistas de manera automática. Se necesita haber especificado el idioma de todas las pistas y haber marcado las que son forzadas.
         """
+
         if titulo:
             self.archivo.title = titulo
 
@@ -208,7 +218,7 @@ class MKV: #Clase para archivos MKV
 
                 self.archivo.tracks[id].track_name = nombre
 
-    def sincronizar (self, tiempo:int, tracks:List[int] = [], audios:List[str] = [], subtitulos:List[str] = [], forz:Dict[str, bool] = {}):
+    def sincronizar(self, tiempo:int, tracks: List[int] = None, audios: List[str] = None, subtitulos: List[str] = None, forz: Dict[str, bool] = None):
         """
         Método para ajustar o sincronizar las pistas al tiempo especificado. Utilizar la variable 'tracks' o las variables 'audios', 'subtitulos' y 'forz'.\n
         sincronizar(tiempo=350, tracks([1, 2, 4, 5]))\n
@@ -225,7 +235,7 @@ class MKV: #Clase para archivos MKV
         if tracks:
             for id in tracks:
                 self.archivo.tracks[id].sync = tiempo
-        
+
         elif audios or subtitulos:
             for id, track in enumerate(self.archivo.tracks[1:], start=1):
                 if audios and track.track_type == 'audio' and track.language in audios:
@@ -239,7 +249,7 @@ class MKV: #Clase para archivos MKV
             for id in range(1, len(self.archivo.tracks)+1):
                 self.archivo.tracks[id].sync = tiempo
     
-    def recortar(self, inicio: bool = False, final: bool = False, frames: Union[int, List[int]] = [], segundos: Union[int, List[int]] = []):
+    def recortar(self, inicio: bool = False, final: bool = False, frames: Union[int, List[int]] = None, segundos: Union[int, List[int]] = None):
         """
         Método para recortar el archivo. Necesario indicar si el recorte afecta a la primarsa parte o la segunda y utilizar el método de frames o segundos.
 
@@ -253,7 +263,7 @@ class MKV: #Clase para archivos MKV
         if not inicio and not final:
             quit('Especificar si se separa para recortar la parte del inicio o la parte del final')
         self.split_inicio, self.split_final = inicio, final
-        
+
         if frames:
             self.archivo.split_frames(frames)
         elif segundos:
@@ -282,17 +292,15 @@ class MKV: #Clase para archivos MKV
 
         if self.nuevo_ancho_alto:
             comando = comando[:3] + self.nuevo_ancho_alto + comando[3:]
-        
+
         #subprocess.run(comando)
-        
+
         process = subprocess.Popen(comando, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, encoding='utf-8')
 
         pattern = re.compile(r"[A-Za-z]+:\s([0-9]+)%", re.IGNORECASE)
         for line in process.stdout:
-            # Buscar el porcentaje de progreso
-            match = pattern.search(line)
-            if match:
-                yield int(match.group(1))
+            if match := pattern.search(line):
+                yield int(match[1])
 
         if os.path.isfile(os.path.join(os.path.dirname(output), f'{self.nombre}-003.mkv')):
             archivos = {'-001.mkv', '-002.mkv', '-003.mkv'}

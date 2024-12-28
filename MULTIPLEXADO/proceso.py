@@ -7,7 +7,7 @@ def proceso(archivo):
     mkv = MKV(archivo)
 
     ######
-    
+
     #mkv.idiomas(idiom={}, forz=[])
     #mkv.eliminar(tracks=[])
     mkv.conservar(idiomas = orden_idiomas + idiomas_extra)
@@ -19,8 +19,7 @@ def proceso(archivo):
     mkv.redimensionar(3840, 1000)
 
     ######
-    for progreso in mkv.multiplexar(output=os.path.join(carpeta_multiplexado.done)):
-        yield progreso
+    yield from mkv.multiplexar(output=os.path.join(carpeta_multiplexado.done))
 
 
 def proceso_consola(archivo, progress, task_id):
