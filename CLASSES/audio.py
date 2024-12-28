@@ -73,8 +73,23 @@ class Audio:
         self.inputs['t'] = str(duracion/1000)
 
     def velocidad (self, velocidad: float):
+        """Adjusts the playback speed of audio. Sets the tempo filter for audio processing.
+
+This method modifies the playback speed by updating the 'atempo' filter with a rounded velocity value. The speed is controlled through an acceleration parameter.
+
+Args:
+    velocidad (float): The desired playback speed, which will be rounded to one decimal place.
+
+Examples:
+    # Set audio playback to half speed
+    audio_instance.velocidad(0.5)
+    
+    # Set audio playback to double speed
+    audio_instance.velocidad(2.0)
+
+        """
         self.acelerador = velocidad
-        self.filters['atempo'] = str(round(float(velocidad),1))
+        self.filters['atempo'] = str(round(velocidad,1))
 
     def bucle (self, iteraciones: int = -1, duracion: int = None):
         self.tiempo = duracion or self.tiempo*iteraciones
@@ -83,6 +98,25 @@ class Audio:
             self.inputs['t'] = f'{round(duracion/1000, 2)}'
     
     def crear(self, carpeta: str = None):
+        """Creates and processes an audio file with optional configuration. Generates an audio output with specified parameters and provides progress tracking.
+
+This method handles audio file creation by setting up codec, directory, and applying filters. It uses ffmpeg to process the audio, supports custom output folder, and yields progress percentage during conversion.
+
+Args:
+    carpeta (str, optional): Destination folder for the output audio file. Defaults to None.
+
+Yields:
+    float: Progress percentage of audio file conversion.
+
+Examples:
+    # Create audio file in default directory
+    for progress in audio_instance.crear():
+        print(f"Progress: {progress}%")
+    
+    # Create audio file in specific directory
+    for progress in audio_instance.crear(carpeta='/path/to/output'):
+        print(f"Progress: {progress}%")
+"""
         extension = self.extension_final or self.extension
         self.outputs['acodec'] = audio_codecs[extension]
 
@@ -111,9 +145,13 @@ class Audio:
 
         for line in process.stderr:
             # Buscar el porcentaje de progreso
-            match = re.search(r"time=(\d{2}):(\d{2}):(\d{2})\.(\d+)", line)
-            if match:
-                yield int(int(match.group(1))*3600 + int(match.group(2))*60 + int(match.group(3)) + int(match.group(4))/100)/self.tiempo*100
+            if match := re.search(r"time=(\d{2}):(\d{2}):(\d{2})\.(\d+)", line):
+                yield int(
+                    int(match[1]) * 3600
+                    + int(match.group(2)) * 60
+                    + int(match.group(3))
+                    + int(match.group(4)) / 100
+                ) / self.tiempo * 100
     
     def __str__(self):
         return self.nombre

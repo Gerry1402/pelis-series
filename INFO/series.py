@@ -2,10 +2,13 @@ from dotenv import load_dotenv
 import os, requests
 import tmdbsimple as tmdb
 from rich.prompt import Prompt, IntPrompt
-name = IntPrompt.ask("Enter your name", choices=['1', '2', '3'], default='1')
-print(type(name))
-quit()
+from rich.console import Console
+from rich.columns import Columns
+from prompt_toolkit import prompt
+from prompt_toolkit.shortcuts import checkboxlist_dialog, radiolist_dialog
+from varios import dividir_lista
 
+console = Console()
 
 serie = input('Nombre de la serie: ')
 
@@ -21,13 +24,17 @@ busqueda = tmdb.Search()
 
 busqueda.tv(query=serie)
 
+opciones_busqueda = [(i, f'{result['name']} ({result['first_air_date'].split('-')[0]})') for i, result in enumerate(busqueda.results)]
+if len(opciones_busqueda) > 1:
+    indice = radiolist_dialog(
+        title="Selecciona una opción",
+        text="Usa las teclas de flecha para navegar y [Espacio] para seleccionar:",
+        values=opciones_busqueda,
+    ).run()
+    resultado = busqueda.results[indice]
 
-if len(busqueda.results) > 1:
-    for i, result in enumerate(busqueda.results):
-        info_season = tmdb.TV(result['id']).info()
-        print(f'{i}: ', result['name'], f'({result['first_air_date'].split('-')[0]})')
-
-resultado = busqueda.results[int(input('Seleccionar serie (Numero): ')) if len(busqueda.results)>1 else 0]
+else:
+    resultado = busqueda.results[0]
 
 informacion = tmdb.TV(resultado['id']).info()
 
