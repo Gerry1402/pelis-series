@@ -4,7 +4,6 @@ from rich.panel import Panel
 from rich.live import Live
 from rich.text import Text
 from rich.box import ROUNDED, DOUBLE, SIMPLE, SQUARE, MINIMAL, HEAVY
-from rich import print
 import readchar
 
 class PanelBase:
@@ -20,17 +19,22 @@ class PanelBase:
         return Panel(Text(self.texto, justify='center', style=self.color_text), expand=True, border_style=self.color, box=self.grosor, subtitle=self.subtitulo, title=self.titulo)
 
 class BaseMenu:
-    def __init__(self, pregunta: str, opciones: list, columnas: int = 4, subtitulos: list = None, titulos: list = None):
-        self.pregunta = pregunta
-        self.opciones = opciones
-        self.n_opciones = len(opciones)
-        self.columnas = min(columnas, self.n_opciones)
-        self.filas = len(opciones) // self.columnas + (1 if len(opciones) % columnas else 0)
+    def __init__(self, enunciado: str, opciones: list, columnas: int = 4, subtitulos: list = None, colores: list = None, titulos: list = None, limite: int = None, nombre_limite:str = 'Más'):
+        self.enunciado = enunciado
+        self.opciones_completas = opciones
+        self.opciones = opciones[:limite]+[nombre_limite] if limite else opciones
+        self.n_opciones = len(self.opciones)
+        self.limite = limite
+        self.limitado = True
+        self.columnas_original = columnas
+        self.columnas = limite + 1 if limite else min(columnas, self.n_opciones)
+        self.filas = len(self.opciones) // self.columnas + (1 if len(self.opciones) % columnas else 0)
         self.restantes_fila = (self.n_opciones % self.columnas) if self.filas > 1 else 0
         self.consola = Console()
         self.current_pos = 0
-        self.subtitulos = subtitulos or ['' for _ in range(self.n_opciones)]
-        self.titulos = titulos or ['' for _ in range(self.n_opciones)]
+        self.subtitulos = subtitulos or ['' for _ in range(len(self.opciones_completas))]
+        self.titulos = titulos or ['' for _ in range(len(self.opciones_completas))]
+        self.colores = colores if type(colores)==list and len(colores) == 3 else ['#ff0000', '#ff7f00', '#ffff00']
         self.nav_config = {
             readchar.key.DOWN: {
                 'criticos_2': range(self.n_opciones - self.columnas, self.n_opciones-self.restantes_fila),
@@ -44,22 +48,25 @@ class BaseMenu:
 
     def _crear_tabla(self):
         tabla = Table.grid(expand=True)
-        [tabla.add_column() for _ in range(self.columnas)]
+        [tabla.add_column(ratio=1) for _ in range(self.columnas)]
 
         paneles = []
         for i in range(self.n_opciones):
             panel = PanelBase(self.opciones[i])
             if i == self.current_pos:
-                panel.color = 'red' if hasattr(self, 'selected_options') and i in self.selected_options else 'green'
+                panel.color = self.colores[2] if hasattr(self, 'selected_options') and i in self.selected_options else self.colores[0]
                 panel.grosor = HEAVY
             elif hasattr(self, 'selected_options') and i in self.selected_options:
-                panel.color = 'yellow'
-            panel.subtitulo = self.subtitulos[i]
-            panel.titulo = self.titulos[i]
+                panel.color = self.colores[1]
+            if (i != self.limite and self.limitado) or not self.limitado:
+                panel.subtitulo = self.subtitulos[i]
+                panel.titulo = self.titulos[i]
             paneles.append(panel.crear_panel())
-            if ((i+1)%self.columnas == 0 and i != 0) or i == self.n_opciones - 1:
+            if (i+1)%self.columnas == 0 and i != 0:
                 tabla.add_row(*paneles)
                 paneles = []
+        if paneles:
+            tabla.add_row(*paneles, end_section=True)
 
         return tabla
 
@@ -79,9 +86,27 @@ class BaseMenu:
         elif key in [readchar.key.LEFT, readchar.key.RIGHT]:
             valor = - 1 if key == readchar.key.LEFT else + 1
         self.current_pos = (self.current_pos + valor) % self.n_opciones
+    
+    def _update_dimensions(self):
+        self.limitado = False
+        self.opciones = self.opciones_completas
+        self.n_opciones = len(self.opciones)
+        self.columnas = self.columnas_original
+        self.filas = len(self.opciones) // self.columnas + (1 if len(self.opciones) % self.columnas else 0)
+        self.restantes_fila = (self.n_opciones % self.columnas) if self.filas > 1 else 0
+        self.nav_config = {
+                readchar.key.DOWN: {
+                    'criticos_2': range(self.n_opciones - self.columnas, self.n_opciones-self.restantes_fila),
+                    'criticos_1': range(self.n_opciones - self.restantes_fila, self.n_opciones)
+                },
+                readchar.key.UP: {
+                    'criticos_1': range(self.restantes_fila),
+                    'criticos_2': range(self.restantes_fila, self.columnas)
+                }
+            }
 
     def _mostrar_base(self, index=False, multi_select=False):
-        self.consola.print(Panel(Text(self.pregunta, style='box', justify='center'), box=SIMPLE, expand=True))
+        self.consola.print(Panel(Text(self.enunciado, style='box', justify='center'), box=SIMPLE, expand=True))
         with Live(self._crear_tabla(), refresh_per_second=20, console=self.consola, vertical_overflow="ellipsis") as live:
             while True:
                 live.update(self._crear_tabla())
@@ -94,28 +119,31 @@ class BaseMenu:
                     self._seleccionar_desselecionar(self.current_pos)
 
                 elif key == readchar.key.ENTER:
-                    if not multi_select:
+                    if self.current_pos == self.limite and self.limitado:
+                        self._update_dimensions()
+                    elif not multi_select:
                         return self.current_pos if index else self.opciones[self.current_pos]
-
-                    if index:
+                    elif index:
                         return sorted(self.selected_options)
-                    return [self.opciones[idx] for idx in sorted(self.selected_options)]
+                    else:
+                        return [self.opciones[idx] for idx in sorted(self.selected_options)]
 
                 elif key == readchar.key.ESC:
                     return [] if multi_select else None
 
 
 class MultiSelectMenu(BaseMenu):
-    def __init__(self, opciones: list, columnas: int = 4, subtitulos: list = None, titulos: list = None, max_selections=None):
-        super().__init__(opciones, columnas, subtitulos, titulos)
+    def __init__(self, enunciado: str, opciones: list, columnas: int = 4, subtitulos: list = None, titulos: list = None, max_selections=None, limite: int=None, nombre_limite: str='Más'):
+        super().__init__(enunciado, opciones, columnas, subtitulos, titulos, limite, nombre_limite)
         self.selected_options = set()
         self.max_selections = max_selections or self.n_opciones
 
     def _seleccionar_desselecionar(self, idx):
-        if idx in self.selected_options:
-            self.selected_options.remove(idx)
-        elif len(self.selected_options) < self.max_selections:
-            self.selected_options.add(idx)
+        if not (self.current_pos == self.limite and self.limitado):
+            if idx in self.selected_options:
+                self.selected_options.remove(idx)
+            elif len(self.selected_options) < self.max_selections:
+                self.selected_options.add(idx)
 
     def mostrar(self, index=False):
         return self._mostrar_base(index=index, multi_select=True)

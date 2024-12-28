@@ -20,9 +20,3 @@ def proceso(archivo):
 
     ######
     yield from mkv.multiplexar(output=os.path.join(carpeta_multiplexado.done))
-
-
-def proceso_consola(archivo, progress, task_id):
-    for progreso in proceso(archivo):
-        progress.update(task_id, completed=progreso)
-        print(f'{os.path.splitext(os.path.basename(archivo))[0]}: {progreso}%             ', end='\r')

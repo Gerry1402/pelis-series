@@ -4,11 +4,45 @@ from typing import Union, List, Dict
 from rich.progress import Progress
 
 idiomas = ['Català', 'Español', 'English', '日本語', 'Italiano', 'Français']
-iso6392 = ['cat', 'spa', 'eng', 'jpn', 'ita', 'fra']
-idiomas_sub = ['Subtítols', 'Subtítulos', 'Subtitles', '字幕', 'Sottotitoli', 'Sous-titres']
-idiomas_forz = ['Subtítols Forçats', 'Subtítulos Forzados', 'Subtitles Forced', '強制字幕', 'Sottotitoli forzati', 'Sous-titres forcés']
-sub = {iso6392[i]: idiomas_sub[i] for i in range(len(iso6392))}
-forz = {iso6392[i]: idiomas_forz[i] for i in range(len(iso6392))}
+iso6392 = {'cat': 'Català', 'spa': 'Español', 'eng': 'English', 'jpn': '日本語', 'ita': 'Italiano', 'fra': 'Français'}
+info_idiomas = {
+    'Català': {
+        'iso639-2': 'cat',
+        'iso639-1': 'ca',
+        'subtitulos': 'Subtítols',
+        'subtitulos_forzados': 'Subtítols Forçats'
+        },
+    'Español': {
+        'iso639-2': 'spa',
+        'iso639-1': 'es',
+        'subtitulos': 'Subtítulos',
+        'subtitulos_forzados': 'Subtítulos Forzados'
+        },
+    'English': {
+        'iso639-2': 'eng',
+        'iso639-1': 'en',
+        'subtitulos': 'Subtitles',
+        'subtitulos_forzados': 'Subtitles Forced'
+        },
+    '日本語': {
+        'iso639-2': 'jpn',
+        'iso639-1': 'ja',
+        'subtitulos': '字幕',
+        'subtitulos_forzados': '強制字幕'
+        },
+    'Italiano': {
+        'iso639-2': 'ita',
+        'iso639-1': 'it',
+        'subtitulos': 'Sottotitoli',
+        'subtitulos_forzados': 'Sottotitoli Forzati'
+        },
+    'Français': {
+        'iso639-2': 'fra',
+        'iso639-1': 'fr',
+        'subtitulos': 'Sous-titres',
+        'subtitulos_forzados': 'Sous-titres Forcés'
+        },
+}
 
 class MKV: #Clase para archivos MKV
 
@@ -212,9 +246,9 @@ class MKV: #Clase para archivos MKV
                     nombre = track.track_codec
 
                 elif track.track_type == 'subtitles':
-                    nombre = sub.get(track.language, track.track_name)
+                    nombre = info_idiomas.get(iso6392.get(track.language), track.track_name)['subtitulos']
                     if track.forced_track:
-                        nombre = forz.get(track.language, track.track_name)
+                        nombre = info_idiomas.get(iso6392.get(track.language), track.track_name)['subtitulos_forzados']
                         nombre = nombre.capitalize()
 
                 self.archivo.tracks[id].track_name = nombre
@@ -271,8 +305,10 @@ class MKV: #Clase para archivos MKV
             self.archivo.split_duration(segundos)
     
     def redimensionar(self, ancho:int, alto:int):
+        if ancho == self.ancho and alto == self.alto:
+            return
         self.nuevo_ancho_alto = ['--display-dimensions', f'0:{ancho}x{alto}']
-        self.archivo.tracks[0].track_name = f'HEVC {ancho}×{alto}'
+        self.archivo.tracks[0].track_name = f'HEVC {ancho}×{alto} (R)'
     
     def multiplexar(self, output: str = None):
         """ 
