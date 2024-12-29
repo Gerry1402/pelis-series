@@ -25,8 +25,10 @@ for result in busqueda.results:
     opciones.append(result['name'])
     years.append(result['first_air_date'].split('-')[0])
 
+# quit()
+
 if len(opciones) > 1:
-    indice = Menu(opciones=opciones, subtitulos=years).mostrar(index=True)
+    indice = Menu(enunciado=f'Resultados de "{serie}"', opciones=opciones, subtitulos=years, limite = 4, nombre_limite='... Más series').mostrar(index=True)
     resultado = busqueda.results[indice]
     print(resultado)
 
@@ -51,7 +53,7 @@ fecha_serie = informacion['first_air_date'] # TITLE (Collection)
 sinopsis_serie = informacion['overview'] # TITLE (Collection)
 idioma = informacion['languages']
 
-for temporada in informacion['seasons']:
+for temporada in informacion['seasons'][1:]:
     temporada = tmdb.TV_Seasons(id_serie, temporada['season_number']).info()
     # ['_id', 'air_date', 'episodes', 'name', 'overview', 'id', 'poster_path', 'season_number', 'vote_average']
     fecha_temporada = temporada['air_date'] # TITLE (Season)
@@ -62,8 +64,7 @@ for temporada in informacion['seasons']:
         fecha_episodio = episodio['air_date']
         numero_temporada = temporada['season_number']
         print(numero_temporada)
-        for person in episodio['crew']:
-            print(f'{person['name']}\t{person['job']}')
+        print(sorted({person['job'] for person in episodio['crew']}))
 
         roles = {   
                     'Director': 'DIRECTOR',
@@ -74,6 +75,7 @@ for temporada in informacion['seasons']:
                     'Writer': 'WRITTEN BY',
                     'Director of Photography': 'DIRECTOR_OF_PHOTOGRAPHY',
                     'Sound Re-Recording Mixer': 'SOUND_ENGINEER',
+                    # 'Excutive Producer',
                     # 'Script Supervisor',
                     # 'Costume Supervisor',
                     # 'Co-Executive Producer',
@@ -90,6 +92,31 @@ for temporada in informacion['seasons']:
                     # 'Executive Consultant',
                     # 'Unit Production Manager'
                 }
+        roles = [
+                    'Associate Producer',
+                    'Casting',
+                    'Casting Associate',
+                    'Co-Producer',
+                    'Consulting Producer',
+                    'Director',
+                    'Director of Photography',
+                    'Editor',
+                    'Executive Producer',
+                    'First Assistant Director',
+                    'Hairstylist',
+                    'Makeup Artist',
+                    'Producer',
+                    'Production Coordinator',
+                    'Production Sound Mixer',
+                    'Property Master',
+                    'Scientific Consultant',
+                    'Script Supervisor',
+                    'Second Assistant Director',
+                    'Set Decoration',
+                    'Sound Re-Recording Mixer',
+                    'Unit Production Manager',
+                    'Writer'
+                ]
         quit()
 
 print(estado)

@@ -1,4 +1,3 @@
-from CLASSES.mkv import MKV
 from .start import *
 
 idiomas_extra = []

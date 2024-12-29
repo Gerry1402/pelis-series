@@ -21,30 +21,30 @@ class PanelBase:
 class BaseMenu:
     def __init__(self, enunciado: str, opciones: list, columnas: int = 4, subtitulos: list = None, colores: list = None, titulos: list = None, limite: int = None, nombre_limite:str = 'Más'):
         self.enunciado = enunciado
+        self.limite = limite if limite and limite < len(opciones) else None
+        self.limitado = self.limite < len(opciones) if self.limite else False
         self.opciones_completas = opciones
-        self.opciones = opciones[:limite]+[nombre_limite] if limite else opciones
+        self.opciones = opciones[:limite]+[nombre_limite] if self.limite else opciones
         self.n_opciones = len(self.opciones)
-        self.limite = limite
-        self.limitado = True
         self.columnas_original = columnas
-        self.columnas = limite + 1 if limite else min(columnas, self.n_opciones)
+        self.columnas = self.limite + 1 if self.limite else min(columnas, self.n_opciones)
         self.filas = len(self.opciones) // self.columnas + (1 if len(self.opciones) % columnas else 0)
         self.restantes_fila = (self.n_opciones % self.columnas) if self.filas > 1 else 0
         self.consola = Console()
         self.current_pos = 0
-        self.subtitulos = subtitulos or ['' for _ in range(len(self.opciones_completas))]
-        self.titulos = titulos or ['' for _ in range(len(self.opciones_completas))]
+        self.subtitulos = subtitulos
+        self.titulos = titulos
         self.colores = colores if type(colores)==list and len(colores) == 3 else ['#ff0000', '#ff7f00', '#ffff00']
         self.nav_config = {
-            readchar.key.DOWN: {
-                'criticos_2': range(self.n_opciones - self.columnas, self.n_opciones-self.restantes_fila),
-                'criticos_1': range(self.n_opciones - self.restantes_fila, self.n_opciones)
-            },
-            readchar.key.UP: {
-                'criticos_1': range(self.restantes_fila),
-                'criticos_2': range(self.restantes_fila, self.columnas)
+                readchar.key.DOWN: {
+                    'criticos_2': range(self.n_opciones - self.columnas, self.n_opciones-self.restantes_fila),
+                    'criticos_1': range(self.n_opciones - self.restantes_fila, self.n_opciones)
+                },
+                readchar.key.UP: {
+                    'criticos_1': range(self.restantes_fila),
+                    'criticos_2': range(self.restantes_fila, self.columnas)
+                }
             }
-        }
 
     def _crear_tabla(self):
         tabla = Table.grid(expand=True)
@@ -59,8 +59,10 @@ class BaseMenu:
             elif hasattr(self, 'selected_options') and i in self.selected_options:
                 panel.color = self.colores[1]
             if (i != self.limite and self.limitado) or not self.limitado:
-                panel.subtitulo = self.subtitulos[i]
-                panel.titulo = self.titulos[i]
+                if self.subtitulos:
+                    panel.subtitulo = self.subtitulos[i]
+                if self.titulos:
+                    panel.titulo = self.titulos[i]
             paneles.append(panel.crear_panel())
             if (i+1)%self.columnas == 0 and i != 0:
                 tabla.add_row(*paneles)

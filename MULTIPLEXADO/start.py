@@ -1,9 +1,7 @@
 import os
-from CLASSES.mkv import idiomas, info_idiomas
+from CLASSES.mkv import *
 from directorios import *
-from varios import dividir_lista
-from CLASSES.menu_seleccion import Menu, MultiSelectMenu
-from CLASSES.etiquetas import InfoEtiquetas
+from CLASSES.menu_seleccion import Menu
 from rich import print
 
 
