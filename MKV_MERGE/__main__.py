@@ -1,10 +1,11 @@
 import os, sys
 from pymkv import MKVTrack as mkvt, MKVFile as mkvf, MKVAttachment as mkva
+from CLASSES.mkv import MKV
 from directorios import *
 
 # EDITAR SÓLO ESTA PARTE. SEGUIR INSRRUCCIONES. UTILIZAR ESPAÑOL.
 
-Audio = False
+Audio = True
 ISO_6392_AAC = 'eng'
 delay_AAC = 0
 
@@ -31,10 +32,10 @@ for i, video in enumerate(videos, start=1):
     nombre, extension = os.path.splitext(os.path.basename(video))
     os.makedirs(carpeta_merge.resultado, exist_ok=True)
     print(f"Multiplexando episodio {nombre}")
-    mkv = mkvf(file_path = video)
+    mkv = MKV(video)
 
-    mkv.add_track(mkvt(file_path = audios[i], language = ISO_6392_AAC, sync = delay_AAC))  if Audio else None
-    mkv.add_track(mkvt(file_path = subtitulos[i], language=ISO_6392_ASS, sync = delay_ASS))  if Subtitulos else None
-    mkv.mux(os.path.join(carpeta_merge.resultado, f'{nombre}{extension}'), silent = True)
+    mkv.archivo.add_track(mkvt(file_path = audios[i-1], language = ISO_6392_AAC, sync = delay_AAC))  if Audio else None
+    mkv.archivo.add_track(mkvt(file_path = subtitulos[i-1], language=ISO_6392_ASS, sync = delay_ASS))  if Subtitulos else None
+    [print(f'{r}    ', end='\r') for r in mkv.multiplexar(os.path.join(carpeta_merge.resultado))]
     print(f"Completado{'s' if i!=1 else ''} {i} de {videos}           ", end='\r')
 print("Todos los episodios han sido procesados                                 ")

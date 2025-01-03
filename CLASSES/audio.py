@@ -72,7 +72,8 @@ class Audio:
         self.inputs['ss'] = start
         self.inputs['t'] = str(duracion/1000)
 
-    def velocidad (self, velocidad: float):
+    def velocidad (self, velocidad: float = None, segundos: int = None):
+
         """Adjusts the playback speed of audio. Sets the tempo filter for audio processing.
 
 This method modifies the playback speed by updating the 'atempo' filter with a rounded velocity value. The speed is controlled through an acceleration parameter.
@@ -88,8 +89,8 @@ Examples:
     audio_instance.velocidad(2.0)
 
         """
-        self.acelerador = velocidad
-        self.filters['atempo'] = str(round(velocidad,1))
+        self.acelerador = velocidad or segundos/self.tiempo
+        self.filters['atempo'] = str(velocidad)
 
     def bucle (self, iteraciones: int = -1, duracion: int = None):
         self.tiempo = duracion or self.tiempo*iteraciones
@@ -116,7 +117,8 @@ Examples:
     # Create audio file in specific directory
     for progress in audio_instance.crear(carpeta='/path/to/output'):
         print(f"Progress: {progress}%")
-"""
+        """
+        print('holaaa')
         extension = self.extension_final or self.extension
         self.outputs['acodec'] = audio_codecs[extension]
 
@@ -136,22 +138,30 @@ Examples:
             stream = ffmpeg.output(stream, os.path.join(carpeta, f'{self.nombre}.{extension}'), map = '0:a:0', **self.outputs)
         else:
             stream = stream_1
-        
-        # ffmpeg.run(stream)
 
-        comando = stream.compile()
+        ffmpeg.run(stream)
 
-        process = subprocess.Popen(comando, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, encoding='utf-8')
+        # comando = stream.compile()
 
-        for line in process.stderr:
-            # Buscar el porcentaje de progreso
-            if match := re.search(r"time=(\d{2}):(\d{2}):(\d{2})\.(\d+)", line):
-                yield int(
-                    int(match[1]) * 3600
-                    + int(match.group(2)) * 60
-                    + int(match.group(3))
-                    + int(match.group(4)) / 100
-                ) / self.tiempo * 100
+        # process = subprocess.Popen(comando, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, encoding='utf-8')
+
+        # for line in process.stderr:
+        #     # Buscar el porcentaje de progreso
+        #     if match := re.search(r"time=(\d{2}):(\d{2}):(\d{2})\.(\d+)", line):
+        #         yield (
+        #             (
+        #                 int(
+        #                     (
+        #                         int(match[1]) * 3600
+        #                         + int(match[2]) * 60
+        #                         + int(match[3])
+        #                         + int(match[4]) / 100
+        #                     )
+        #                 )
+        #                 / self.tiempo
+        #             )
+        #             * 100
+        #         )
     
     def __str__(self):
         return self.nombre
@@ -159,6 +169,6 @@ Examples:
     def __call__(self):
         return self.nombre
 
-# audio = Audio('D:\\Gerard\\Videos\\mkvmerge python\\merge\\audios\\02-Miracle.flac')
-# audio.recortar(duracion=120000)
-# audio.crear('D:\\Gerard\\Videos\\mkvmerge python\\merge\\audios\\dONE')
+audio = Audio('D:\\Gerard\\Videos\\mkvmerge python\\merge\\audios\\quantumania.ac3')
+audio.velocidad(segundos = 2*3600+4*60+34)
+audio.crear('D:\\Gerard\\Videos\\mkvmerge python\\merge\\audios\\dONE')
