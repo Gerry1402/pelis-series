@@ -28,7 +28,8 @@ def main():
             for avance in proceso(archivo):
                 porcentaje = tamaño_archivo * (avance / 100)
                 progreso_total = (tamaño_analizado + porcentaje) * 100 / tamaño_total
-                live.update(crear_tabla(progreso_total, nombre_archivo, avance, time.time() - tiempo))
+                if progreso_total != 0:
+                    live.update(crear_tabla(progreso_total, nombre_archivo, avance, time.time() - tiempo))
             tamaño_analizado += os.path.getsize(archivo)
 
 if __name__ == '__main__':

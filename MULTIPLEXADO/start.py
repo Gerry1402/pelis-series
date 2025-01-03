@@ -17,4 +17,4 @@ priorizar = Menu(enunciado='¿Priorizar idioma original?', opciones=['Sí', 'No'
 idioma_original = Menu(enunciado='Seleccionar idioma original', opciones=idiomas, subtitulos=iso6392, columnas=4, limite=4, nombre_limite='... Más idiomas').mostrar()
 print('\n')
 idioma_original_iso = info_idiomas[idioma_original]['iso639-2']
-orden_idiomas = [idioma_original, 'cat', 'spa'] if priorizar else ['cat', idioma_original, 'spa']
+orden_idiomas = [idioma_original_iso, 'cat', 'spa'] if priorizar else ['cat', idioma_original_iso, 'spa']
