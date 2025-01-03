@@ -30,7 +30,7 @@ def main():
                 tamaño_video += os.path.getsize(audios[i])
             if hacer_subtitulos:
                 tamaño_video += os.path.getsize(subtitulos[i])
-            for avance in proceso(video):
+            for avance in proceso(i):
                 porcentaje = tamaño_video * (avance / 100)
                 progreso_total = (tamaño_analizado + porcentaje) * 100 / tamaño_total
                 if progreso_total != 0 and avance != 0:
