@@ -33,7 +33,7 @@ def main():
             for avance in proceso(video):
                 porcentaje = tamaño_video * (avance / 100)
                 progreso_total = (tamaño_analizado + porcentaje) * 100 / tamaño_total
-                if progreso_total != 0:
+                if progreso_total != 0 and avance != 0:
                     live.update(crear_tabla(progreso_total, nombre_video, avance, time.time() - tiempo))
             tamaño_analizado += tamaño_video
 
