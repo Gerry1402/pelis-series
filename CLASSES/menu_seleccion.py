@@ -21,7 +21,11 @@ class PanelBase:
 class BaseMenu:
     def __init__(self, enunciado: str, opciones: list, columnas: int = 4, subtitulos: list = None, colores: list = None, titulos: list = None, limite: int = None, nombre_limite:str = 'Más'):
         self.enunciado = enunciado
-        self.limite = limite if limite and limite < len(opciones) else None
+        self.limite = None
+# sourcery skip: merge-nested-ifs
+        if limite:
+            if limite < len(opciones):
+                self.limite = limite
         self.limitado = self.limite < len(opciones) if self.limite else False
         self.opciones_completas = opciones
         self.opciones = opciones[:limite]+[nombre_limite] if self.limite else opciones
