@@ -140,7 +140,7 @@ class BaseMenu:
 
 class MultiSelectMenu(BaseMenu):
     def __init__(self, enunciado: str, opciones: list, columnas: int = 4, subtitulos: list = None, titulos: list = None, max_selections=None, limite: int=None, nombre_limite: str='Más'):
-        super().__init__(enunciado, opciones, columnas, subtitulos, titulos, limite, nombre_limite)
+        super().__init__(enunciado, opciones, columnas, subtitulos, titulos, max_selections, limite, nombre_limite)
         self.selected_options = set()
         self.max_selections = max_selections or self.n_opciones
 
