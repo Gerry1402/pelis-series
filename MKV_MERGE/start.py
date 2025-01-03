@@ -30,7 +30,7 @@ if hacer_subtitulos:
     idioma_subtitulos = info_idiomas[Menu(enunciado='Seleccionar idioma subtitulos', opciones=idiomas, subtitulos=iso6392, columnas=4, limite=4, nombre_limite='... Más idiomas').mostrar()]['iso639-2']
 
 
-delay_audios_subtitulos = Menu(enunciado = '¿Añadir delay?', opciones=audios_subtitulos).mostrar()
+delay_audios_subtitulos = MultiSelectMenu(enunciado = '¿Añadir delay?', opciones=audios_subtitulos).mostrar()
 delay_audio = int(input('Delay para los audios: ')) if 'Audios' in delay_audios_subtitulos else 0
 delay_subtitulos = int(input('Delay para los subtitulos: ')) if 'Subtítulos' in delay_audios_subtitulos else 0
 
