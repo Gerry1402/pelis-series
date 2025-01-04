@@ -6,3 +6,4 @@ PRUEBAS
 **/__pycache__
 .env
 IGNORAR
+**/proceso.py

@@ -6,8 +6,8 @@ from rich import print
 
 
 
-audios = [os.path.join(carpeta_merge.audios.done, audio) for audio in os.listdir(carpeta_merge.audios.done)]
-subtitulos = [os.path.join(carpeta_merge.subtitulos.done, subtitulo) for subtitulo in os.listdir(carpeta_merge.subtitulos.done)]
+audios = [os.path.join(carpeta_merge.audios.done, audio) for audio in os.listdir(carpeta_merge.audios.done)] or [os.path.join(str(carpeta_merge.audios), audio) for audio in os.listdir(str(carpeta_merge.audios))]
+subtitulos = [os.path.join(carpeta_merge.subtitulos.done, subtitulo) for subtitulo in os.listdir(carpeta_merge.subtitulos.done)] or [os.path.join(str(carpeta_merge.subtitulos), audio) for audio in os.listdir(str(carpeta_merge.subtitulos))]
 videos = [os.path.join(carpeta_merge.videos, video) for video in os.listdir(carpeta_merge.videos)]
 n_archivos = len(videos)
 tamaño_videos = sum(os.path.getsize(video) for video in videos)

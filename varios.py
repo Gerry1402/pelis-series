@@ -11,17 +11,16 @@ def lista_carpetas(carpeta):
     return [elemento for elemento in os.listdir(carpeta) if os.path.isdir(os.path.join(carpeta, elemento))]
 
 def lista_archivos(carpeta, extension:str=None):
-    lista = {} if not extension else []
+    lista = [] if extension else {}
     for elemento in os.listdir(carpeta):
         if os.path.isfile(os.path.join(carpeta, elemento)):
             nombre, ext = os.path.splitext(elemento)
             if extension:
                 lista.append(nombre) if extension == ext else None
+            elif nombre in lista:
+                lista[nombre] += [ext]
             else:
-                if nombre not in lista:
-                    lista[nombre] = [ext]
-                else:
-                    lista[nombre] += [ext]
+                lista[nombre] = [ext]
     return sorted(lista) if extension else lista
 
 def renombrar_elementos(carpeta, english=True):
@@ -63,5 +62,7 @@ def no_existen(ruta_1, ruta_2):
     return sorted(set(lista_1) ^ set(lista_2))
 
 def mayus_minus(ruta_1, ruta_2):
-    diferencias = set([nombre.lower() for nombre in lista_archivos(ruta_1).keys() ^ lista_archivos(ruta_2).keys()])
+    diferencias = {
+        nombre.lower() for nombre in lista_archivos(ruta_1).keys()^lista_archivos(ruta_2).keys()
+    }
     return sorted(diferencias - set(no_existen(ruta_1, ruta_2)))
