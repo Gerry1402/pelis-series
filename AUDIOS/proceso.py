@@ -7,14 +7,8 @@ def proceso(archivo):
     audio = Audio(archivo)
 
     ######
-    
-    audio.bucle(3)
+
+    audio.velocidad(segundos=74474)
 
     ######
-    for progreso in audio.crear(os.path.join(carpeta_audios.done)):
-        yield progreso
-
-
-def proceso_consola(archivo, progress, task_id):
-    for progreso in proceso(archivo):
-        progress.update(task_id, completed=progreso)
+    yield from audio.crear(os.path.join(carpeta_audios.done))

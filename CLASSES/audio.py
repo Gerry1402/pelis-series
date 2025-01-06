@@ -139,29 +139,29 @@ Examples:
         else:
             stream = stream_1
 
-        ffmpeg.run(stream)
+        # ffmpeg.run(stream)
 
-        # comando = stream.compile()
+        comando = stream.compile()
 
-        # process = subprocess.Popen(comando, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, encoding='utf-8')
+        process = subprocess.Popen(comando, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
 
-        # for line in process.stderr:
-        #     # Buscar el porcentaje de progreso
-        #     if match := re.search(r"time=(\d{2}):(\d{2}):(\d{2})\.(\d+)", line):
-        #         yield (
-        #             (
-        #                 int(
-        #                     (
-        #                         int(match[1]) * 3600
-        #                         + int(match[2]) * 60
-        #                         + int(match[3])
-        #                         + int(match[4]) / 100
-        #                     )
-        #                 )
-        #                 / self.tiempo
-        #             )
-        #             * 100
-        #         )
+        for line in process.stderr:
+            # Buscar el porcentaje de progreso
+            if match := re.search(r"time=(\d{2}):(\d{2}):(\d{2})\.(\d+)", line):
+                yield (
+                    (
+                        int(
+                            (
+                                int(match[1]) * 3600
+                                + int(match[2]) * 60
+                                + int(match[3])
+                                + int(match[4]) / 100
+                            )
+                        )
+                        / self.tiempo
+                    )
+                    * 100
+                )
     
     def __str__(self):
         return self.nombre
