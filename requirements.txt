@@ -9,4 +9,4 @@ pymkv2==2.1.0
 pysrt==1.1.2
 python-dotenv==1.0.1
 python-iso639==2024.10.22
-setuptools==75.6.0
+setuptools==78.1.1
